@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ARCADE BOY</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#15161a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="description" content="A phone-first Game Boy handheld arcade." />
+    <link rel="stylesheet" href="arcade.css" />
+  </head>
+  <body>
+    <div id="arcade" class="device" role="application" aria-label="Arcade handheld">
+      <!-- Top branding strip -->
+      <div class="deco-top">
+        <span class="power-line">OFF&nbsp;&#9668;&#9658;&nbsp;ON</span>
+      </div>
+
+      <!-- Screen -->
+      <div class="screen-frame">
+        <div class="screen-top">
+          <span class="led" aria-hidden="true"></span>
+          <span class="screen-title">DOT&#8209;MATRIX ARCADE</span>
+        </div>
+        <div class="lcd-wrap">
+          <canvas id="lcd" class="lcd" width="480" height="576"></canvas>
+        </div>
+      </div>
+
+      <!-- Wordmark -->
+      <div class="brand">
+        <span class="brand-name">ARCADE</span><span class="brand-sub">BOY</span>
+      </div>
+
+      <!-- Main controls: d-pad + A/B -->
+      <div class="controls">
+        <div class="dpad-zone">
+          <div id="dpad" class="dpad" role="group" aria-label="Direction pad">
+            <div class="dpad-cell up" data-dir="up"><span>&#9650;</span></div>
+            <div class="dpad-cell left" data-dir="left"><span>&#9664;</span></div>
+            <div class="dpad-center"></div>
+            <div class="dpad-cell right" data-dir="right"><span>&#9654;</span></div>
+            <div class="dpad-cell down" data-dir="down"><span>&#9660;</span></div>
+          </div>
+        </div>
+        <div class="ab-zone">
+          <button class="round-btn b" data-btn="b" type="button" aria-label="B button"><span>B</span></button>
+          <button class="round-btn a" data-btn="a" type="button" aria-label="A button"><span>A</span></button>
+        </div>
+      </div>
+
+      <!-- Start / Select -->
+      <div class="startsel">
+        <button class="pill" data-btn="select" type="button" aria-label="Select button"><span>SELECT</span></button>
+        <button class="pill" data-btn="start" type="button" aria-label="Start button"><span>START</span></button>
+      </div>
+
+      <!-- Speaker grille -->
+      <div class="speaker" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+    </div>
+
+    <script type="module" src="arcade.js"></script>
+  </body>
+</html>
