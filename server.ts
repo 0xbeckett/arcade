@@ -169,7 +169,13 @@ async function staticFile(pathname: string): Promise<Response> {
   const candidate = isWithinPublic ? Bun.file(target) : Bun.file(resolve(publicDir, "index.html"));
   const file = (await candidate.exists()) ? candidate : Bun.file(resolve(publicDir, "index.html"));
   const type = mimeTypes[extname(basename(file.name)).toLowerCase()] ?? "application/octet-stream";
-  return new Response(file, { headers: { "content-type": type } });
+  // Everything here is tiny and updates on every deploy. Tell the browser (and
+  // the CDN in front of it) to always revalidate so a new build never hides
+  // behind a stale cached shell. The versioned asset URLs in index.html handle
+  // any edge copy that was cached before this header existed.
+  return new Response(file, {
+    headers: { "content-type": type, "cache-control": "no-cache" },
+  });
 }
 
 const server = Bun.serve({

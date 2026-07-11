@@ -66,6 +66,8 @@
       </div>
     </div>
 
-    <script type="module" src="arcade.js"></script>
+    <!-- ?v bumps the CDN cache key so a rebuilt shell ships immediately; the
+         server sends no-cache so later builds revalidate without a bump. -->
+    <script type="module" src="arcade.js?v=2"></script>
   </body>
 </html>
