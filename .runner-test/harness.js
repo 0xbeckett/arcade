@@ -250,7 +250,7 @@ tap('a');
       if (sc > 340 && screen.get(3, 14) === ' ') {
         // support just vanished under the player: airborne, coyote ticking
         phase = 'wait';
-        wait = 3;
+        wait = 2;
         input.release('a'); input.release('down');
       } else {
         let near = false;
@@ -269,7 +269,7 @@ tap('a');
         }
       }
     } else if (phase === 'wait') {
-      if (--wait <= 0) { phase = 'jump'; hold8b = 22; }
+      if (--wait <= 0) { phase = 'jump'; hold8b = 22; input.press('a'); hold8b--; }
     } else { // 'jump': late A press, then see if we cleared the gap
       if (hold8b > 0) { input.press('a'); hold8b--; } else input.release('a');
       if (hold8b < -30) coyoteOk = true; // ~0.9s after the late jump, still alive

@@ -279,6 +279,7 @@
   }
 
   function drawReady(s) {
+    s.fillRect(0, 2, COLS, 11, ' ', 'darkest', 'lightest'); // clear scenery behind text
     s.textCentered(3, 'R U N N E R', 'darkest');
     s.textCentered(5, '>> AUTO RUN >>', 'dark');
     s.textCentered(7, 'A: JUMP', 'darkest');
