@@ -55,6 +55,10 @@ const server = Bun.serve({
         return json({ ok: false, error: 'bad body' }, 400);
       }
     }
+    if (path === '/api/_reset' && req.method === 'POST') {
+      boards.clear();
+      return json({ ok: true });
+    }
     if (path === '/api/score' && req.method === 'OPTIONS') {
       return new Response(null, {
         headers: {
