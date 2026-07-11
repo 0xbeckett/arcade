@@ -7,8 +7,6 @@ controls, and a small **game plugin API** that 10 games drop into independently.
 Vanilla TypeScript + WebGL (with a Canvas2D fallback). No runtime dependencies.
 The build output lives in [`public/`](public/) and is served by the backend.
 
-![screens](docs/GAME_API.md)
-
 ## What's here
 
 | Path                    | What it is                                                        |
