@@ -148,7 +148,7 @@
       vy = 0;
     }
 
-    // while a ceiling overlaps the player, standing up (or jumping into it)
+    // once sliding under a ceiling, standing up (or jumping into it) mid-way
     // would be an instant unfair death — hold the slide until it has passed
     var underCeil = false;
     for (var ci = 0; ci < obstacles.length; ci++) {
@@ -157,10 +157,11 @@
       var csx = co.x - scrollX;
       if (csx + 0.12 < PXR && csx + co.w - 0.12 > PXL) { underCeil = true; break; }
     }
+    var slideLocked = sliding && underCeil;
 
-    sliding = grounded && (ctx.input.isDown('down') || underCeil);
+    sliding = grounded && (ctx.input.isDown('down') || slideLocked);
 
-    if (buffer > 0 && (grounded || coyote > 0) && !underCeil) { // jump (cancels slide)
+    if (buffer > 0 && (grounded || coyote > 0) && !slideLocked) { // jump (cancels slide)
       vy = -JUMP_V;
       grounded = false;
       sliding = false;

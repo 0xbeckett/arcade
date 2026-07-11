@@ -193,6 +193,7 @@ function ceilTest(doSlide) {
     const m = hud.match(/(\d+)/);
     const score = m ? parseInt(m[1], 10) : 0;
     if (score > 95) fixRng([0.7]); // pool [b1,b1,b1,ceil,ceil] -> 0.7*5=3.5 -> 'ceil'
+    if (score >= 200) return { died: false }; // cleared the ceiling-only section
   }
   return { died: false };
 }
@@ -233,6 +234,52 @@ tap('a');
     if (screen.dump().includes('GAME OVER')) { dead8 = true; sawGapDeath = sc > 340; }
   }
   check('falling into a gap ends the run', dead8 && sawGapDeath);
+}
+
+// ============ Test 8b: coyote time (jump 3 ticks AFTER leaving the edge) ====
+fixRng([0]);
+game.init(ctx);
+tap('a');
+{
+  let coyoteOk = false, dead8b = false, hold8b = 0, phase = 'run', wait = 0;
+  for (let i = 0; i < 60 * 120 && !dead8b && !coyoteOk; i++) {
+    const m = screen.dump().split('\n')[0].match(/(\d+)/);
+    const sc = m ? parseInt(m[1], 10) : 0;
+    if (sc > 340) fixRng([0.85]); // force gaps
+    if (phase === 'run') {
+      if (sc > 340 && screen.get(3, 14) === ' ') {
+        // support just vanished under the player: airborne, coyote ticking
+        phase = 'wait';
+        wait = 3;
+        input.release('a'); input.release('down');
+      } else {
+        let near = false;
+        for (let x = 5; x <= 6; x++) {
+          if (screen.get(x, 13) === '█' && screen.get(x, 5) !== '█') near = true;
+        }
+        let ceilNear = false;
+        for (let x = 4; x <= 9; x++) if (screen.get(x, 6) === '█') ceilNear = true;
+        const gapAhead = screen.get(4, 14) === ' ' || screen.get(5, 14) === ' ';
+        if (gapAhead) { hold8b = 0; input.release('a'); input.release('down'); }
+        else if (ceilNear) { hold8b = 0; input.release('a'); input.press('down'); }
+        else {
+          input.release('down');
+          if (near && hold8b <= 0) hold8b = 22;
+          if (hold8b > 0) { input.press('a'); hold8b--; } else input.release('a');
+        }
+      }
+    } else if (phase === 'wait') {
+      if (--wait <= 0) { phase = 'jump'; hold8b = 22; }
+    } else { // 'jump': late A press, then see if we cleared the gap
+      if (hold8b > 0) { input.press('a'); hold8b--; } else input.release('a');
+      if (hold8b < -30) coyoteOk = true; // ~0.9s after the late jump, still alive
+      hold8b--;
+    }
+    step(1);
+    if (screen.dump().includes('GAME OVER')) dead8b = true;
+  }
+  check('coyote time: A pressed 3 ticks after the edge still jumps the gap',
+    coyoteOk && !dead8b, 'phase=' + phase);
 }
 
 // ============ Test 9: score bookkeeping ============
