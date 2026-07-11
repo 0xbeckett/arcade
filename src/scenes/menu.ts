@@ -54,6 +54,9 @@ export class MenuScene implements Scene {
       case 'select':
         this.host.showLeaderboard(games[this.sel].id);
         break;
+      case 'b':
+        this.host.cyclePalette();
+        break;
     }
   }
 

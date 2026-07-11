@@ -49,6 +49,15 @@ export class InputManager implements InputState {
     for (const b of Array.from(this.down)) this.release(b);
   }
 
+  /** Clear all state and edges WITHOUT firing the edge listener. Used when the
+   * shell swaps scenes, so a held button doesn't leak a stray edge to the new
+   * scene and no phantom releases fire on the old (torn-down) scene. */
+  resetSilently(): void {
+    this.down.clear();
+    this.pressedEdge.clear();
+    this.releasedEdge.clear();
+  }
+
   /** Called by the loop after update() to expire one-tick edges. */
   endTick(): void {
     if (this.pressedEdge.size) this.pressedEdge.clear();

@@ -35,4 +35,6 @@ export interface ShellHost {
   showMenu(): void;
   /** Show a game's leaderboard, optionally highlighting a just-set score. */
   showLeaderboard(gameId: string, highlight?: { name: string; score: number }): void;
+  /** Cycle the LCD palette theme (DMG green -> neon -> pocket). */
+  cyclePalette(): void;
 }
