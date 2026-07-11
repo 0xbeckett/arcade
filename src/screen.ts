@@ -152,6 +152,17 @@ export class CellScreen implements Screen {
     for (let j = 0; j < h; j++) this.set(x, y + j, ch, fg);
   }
 
+  /** Debug/testing aid: the current glyph grid as one string per row. */
+  dumpText(): string[] {
+    const out: string[] = [];
+    for (let y = 0; y < ROWS; y++) {
+      let row = '';
+      for (let x = 0; x < COLS; x++) row += this.ch[y * COLS + x];
+      out.push(row);
+    }
+    return out;
+  }
+
   /**
    * Rasterize the cell grid to the RGBA dot buffer. Each cell paints its 6x8
    * footprint with bg, then stamps the glyph's lit dots in fg. Returns a view

@@ -178,6 +178,21 @@ export class Shell implements ShellHost {
     this.palette = PALETTES[this.paletteIndex];
   }
 
+  /** Current scene's id ('menu' | 'game' | 'nameentry' | 'leaderboard' | ...). */
+  currentSceneId(): string {
+    return this.scene.id ?? 'unknown';
+  }
+
+  /** Current palette id (for debugging/tests). */
+  currentPaletteId(): string {
+    return this.palette.id;
+  }
+
+  /** Renderer backend actually in use ('webgl' | 'canvas2d'). */
+  rendererKind(): string {
+    return this.renderer.kind;
+  }
+
   // --- game-over flow ----------------------------------------------------
 
   private handleGameOver(score: number): void {

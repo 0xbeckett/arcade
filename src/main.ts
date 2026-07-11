@@ -77,6 +77,15 @@ function boot(): void {
   // Public plugin surface: games call window.Arcade.registerGame(...).
   (window as any).Arcade = shell.arcade;
 
+  // Read-only introspection for tests, tooling, and the integration ticket.
+  (window as any).ArcadeDebug = {
+    games: () => shell.registry.list().map((g) => g.id),
+    scene: () => shell.currentSceneId(),
+    palette: () => shell.currentPaletteId(),
+    renderer: () => shell.rendererKind(),
+    screenText: () => shell.screen.dumpText(),
+  };
+
   bindControls(shell.input, device);
   bindKeyboard(shell.input);
   preventGestureZoom();
