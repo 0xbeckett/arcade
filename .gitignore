@@ -1,0 +1,4 @@
+scores.db
+scores.db-shm
+scores.db-wal
+node_modules/
