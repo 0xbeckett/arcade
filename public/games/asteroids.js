@@ -34,8 +34,16 @@
   var UFO_SCORE = 200;
   var EXTRA_LIFE_EVERY = 1000;
 
+  // glyphs (all covered by the shell's 5x7 font)
+  var SHADE = String.fromCharCode(0x2593);      // ▓
+  var BLOCK = String.fromCharCode(0x2588);      // █
+  var LIGHTSHADE = String.fromCharCode(0x2591); // ░
+  var DOT = '.';
+  var BALL = String.fromCharCode(0x25CF);       // ●
+  var HEART = String.fromCharCode(0x2665);      // ♥
+
   // --- state --------------------------------------------------------------
-  var ctx, input;
+  var ctx, input, best;
   var state;                   // 'title' | 'play' | 'over'
   var ship, bullets, enemyBullets, rocks, particles, ufo;
   var score, lives, wave, nextLifeAt;
@@ -106,7 +114,7 @@
     var r = rocks[idx];
     rocks.splice(idx, 1);
     addScore(SIZE_SCORE[r.size]);
-    burst(r.x, r.y, r.size * 2 + 1, 0.35, String.fromCharCode(0xB7), 'dark');
+    burst(r.x, r.y, r.size * 2 + 1, 0.35, DOT, 'dark');
     if (r.size > 1) {
       var speed = Math.sqrt(r.vx * r.vx + r.vy * r.vy) * 1.35 + 0.5;
       var base = Math.atan2(r.vx, -r.vy);
@@ -159,7 +167,7 @@
 
   function killShip() {
     burst(ship.x, ship.y, 10, 0.6, String.fromCharCode(0x2591), 'dark');
-    burst(ship.x, ship.y, 6, 0.45, String.fromCharCode(0xB7), 'darkest');
+    burst(ship.x, ship.y, 6, 0.45, DOT, 'darkest');
     lives--;
     deathTimer = DEATH_PAUSE;
   }
@@ -253,7 +261,7 @@
       }
       if (!hit && ufo && hits(b.x, b.y, ufo.x, ufo.y, 1.1)) {
         addScore(UFO_SCORE);
-        burst(ufo.x, ufo.y, 8, 0.5, String.fromCharCode(0xB7), 'darkest');
+        burst(ufo.x, ufo.y, 8, 0.5, DOT, 'darkest');
         ufo = null;
         resetUfoTimer();
         hit = true;
@@ -326,15 +334,9 @@
     String.fromCharCode(0x2191), '/', String.fromCharCode(0x2192), '\\',
     String.fromCharCode(0x2193), '/', String.fromCharCode(0x2190), '\\',
   ];
-  var SHADE = String.fromCharCode(0x2593);  // ▓
-  var BLOCK = String.fromCharCode(0x2588);  // █
-  var LIGHTSHADE = String.fromCharCode(0x2591); // ░
-  var DOT = String.fromCharCode(0xB7);      // ·
-  var BALL = String.fromCharCode(0x25CF);   // ●
-  var HEART = String.fromCharCode(0x2665);  // ♥
 
   function cellAt(screen, x, y, ch, fg) {
-    screen.set(Math.round(wrap(x, COLS)), Math.round(wrap(y, ROWS)), ch, fg);
+    screen.set(wrap(Math.round(x), COLS), wrap(Math.round(y), ROWS), ch, fg);
   }
 
   // chunky blob: fill every cell whose center is inside the rock's radius
