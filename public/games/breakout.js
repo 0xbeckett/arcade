@@ -122,7 +122,7 @@
     speed = levelSpeed();
     combo = 0;
     serveTimer = 0;
-    ball = { x: paddleX + PADDLE_W / 2, y: PADDLE_Y - BALL_R - 0.05, vx: 0, vy: 0 };
+    ball = { x: paddleX + PADDLE_W / 2, y: PADDLE_Y - 1, vx: 0, vy: 0 };
     prevX = ball.x;
     prevY = ball.y;
     trail = [];
@@ -463,7 +463,7 @@
 
       if (state === 'serve') {
         ball.x = paddleX + PADDLE_W / 2;
-        ball.y = PADDLE_Y - BALL_R - 0.05;
+        ball.y = PADDLE_Y - 1;
         serveTimer += dt;
         if (serveTimer >= SERVE_AUTO) launch();
       } else if (state === 'play') {
