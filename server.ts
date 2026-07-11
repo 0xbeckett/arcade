@@ -136,9 +136,11 @@ async function score(request: Request, server: ReturnType<typeof Bun.serve>): Pr
     return badRequest("score payload must be an object");
   }
 
-  const { game, name, score: value } = input as Record<string, unknown>;
+  // The frozen game API documents `gameId`; accept `game` too for compatibility.
+  const { game, gameId, name, score: value } = input as Record<string, unknown>;
+  const gameKey = typeof game === "string" ? game : typeof gameId === "string" ? gameId : "";
   const cleanName = typeof name === "string" ? name.trim() : "";
-  if (typeof game !== "string" || !gameSet.has(game)) return badRequest("invalid game");
+  if (!gameSet.has(gameKey)) return badRequest("invalid game");
   const nameLength = Array.from(cleanName).length;
   if (nameLength < 1 || nameLength > 16) return badRequest("invalid name");
   if (typeof value !== "number" || !Number.isInteger(value) || value < 0 || value > 100_000_000) {
@@ -146,9 +148,9 @@ async function score(request: Request, server: ReturnType<typeof Bun.serve>): Pr
   }
 
   const now = Date.now();
-  insertScore.run(game, cleanName, value, now);
-  const best = (bestScore.get(game, cleanName) as { best: number }).best;
-  const higher = (rankScore.get(game, value) as { higher: number }).higher;
+  insertScore.run(gameKey, cleanName, value, now);
+  const best = (bestScore.get(gameKey, cleanName) as { best: number }).best;
+  const higher = (rankScore.get(gameKey, value) as { higher: number }).higher;
   const rank = higher + 1;
 
   return json({ rank, best, top: rank <= 10 });
@@ -179,7 +181,7 @@ const server = Bun.serve({
     if (pathname === "/api/health" && request.method === "GET") return json({ ok: true });
     if (pathname === "/api/score" && request.method === "POST") return score(request, server);
     if (pathname === "/api/leaderboard" && request.method === "GET") {
-      const game = url.searchParams.get("game");
+      const game = url.searchParams.get("game") ?? url.searchParams.get("gameId");
       const limit = parseLimit(url.searchParams.get("limit"));
       if (!gameSet.has(game ?? "")) return badRequest("invalid game");
       return json(leaderboard.all(game, limit), 200, true);
