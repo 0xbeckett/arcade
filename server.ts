@@ -1,7 +1,12 @@
 import { Database } from "bun:sqlite";
 import { basename, extname, resolve, sep } from "node:path";
 
-const port = Number.parseInt(process.env.PORT ?? "8787", 10) || 8787;
+function portFromEnvironment(): number {
+  const candidate = Number(process.env.PORT ?? 8787);
+  return Number.isInteger(candidate) && candidate > 0 && candidate < 65_536 ? candidate : 8787;
+}
+
+const port = portFromEnvironment();
 const publicDir = resolve(import.meta.dir, "public");
 const publicPrefix = `${publicDir}${sep}`;
 const games = [
@@ -31,16 +36,16 @@ db.run(`
 db.run("CREATE INDEX IF NOT EXISTS scores_game_score ON scores (game, score DESC)");
 
 const insertScore = db.prepare(
-  "INSERT INTO scores (game, name, score, ts) VALUES ($game, $name, $score, $ts)",
+  "INSERT INTO scores (game, name, score, ts) VALUES (?, ?, ?, ?)",
 );
 const bestScore = db.prepare(
-  "SELECT MAX(score) AS best FROM scores WHERE game = $game AND name = $name",
+  "SELECT MAX(score) AS best FROM scores WHERE game = ? AND name = ?",
 );
 const rankScore = db.prepare(
-  "SELECT COUNT(*) AS higher FROM scores WHERE game = $game AND score > $score",
+  "SELECT COUNT(*) AS higher FROM scores WHERE game = ? AND score > ?",
 );
 const leaderboard = db.prepare(
-  "SELECT name, score, ts FROM scores WHERE game = $game ORDER BY score DESC, id ASC LIMIT $limit",
+  "SELECT name, score, ts FROM scores WHERE game = ? ORDER BY score DESC, id ASC LIMIT ?",
 );
 
 type RateWindow = { count: number; resetAt: number };
@@ -79,11 +84,11 @@ function badRequest(message: string): Response {
   return json({ error: message }, 400);
 }
 
-function parseLimit(value: string | null): number | null {
-  if (value === null) return 10;
-  if (!/^[0-9]+$/.test(value)) return null;
+function parseLimit(value: string | null): number {
+  if (value === null || value === "") return 10;
   const limit = Number(value);
-  return Number.isSafeInteger(limit) && limit >= 1 && limit <= 50 ? limit : null;
+  if (!Number.isInteger(limit)) return 10;
+  return Math.max(1, Math.min(50, limit));
 }
 
 function clientIp(request: Request, server: ReturnType<typeof Bun.serve>): string {
@@ -134,18 +139,19 @@ async function score(request: Request, server: ReturnType<typeof Bun.serve>): Pr
   const { game, name, score: value } = input as Record<string, unknown>;
   const cleanName = typeof name === "string" ? name.trim() : "";
   if (typeof game !== "string" || !gameSet.has(game)) return badRequest("invalid game");
-  if (cleanName.length < 1 || cleanName.length > 16) return badRequest("invalid name");
+  const nameLength = Array.from(cleanName).length;
+  if (nameLength < 1 || nameLength > 16) return badRequest("invalid name");
   if (typeof value !== "number" || !Number.isInteger(value) || value < 0 || value > 100_000_000) {
     return badRequest("invalid score");
   }
 
   const now = Date.now();
-  const params = { game, name: cleanName, score: value, ts: now };
-  insertScore.run(params);
-  const best = (bestScore.get(params) as { best: number }).best;
-  const higher = (rankScore.get({ game, score: best }) as { higher: number }).higher;
+  insertScore.run(game, cleanName, value, now);
+  const best = (bestScore.get(game, cleanName) as { best: number }).best;
+  const higher = (rankScore.get(game, value) as { higher: number }).higher;
+  const rank = higher + 1;
 
-  return json({ rank: higher + 1, best, top: value === best });
+  return json({ rank, best, top: rank <= 10 });
 }
 
 async function staticFile(pathname: string): Promise<Response> {
@@ -176,8 +182,7 @@ const server = Bun.serve({
       const game = url.searchParams.get("game");
       const limit = parseLimit(url.searchParams.get("limit"));
       if (!gameSet.has(game ?? "")) return badRequest("invalid game");
-      if (limit === null) return badRequest("invalid limit");
-      return json(leaderboard.all({ game, limit }), 200, true);
+      return json(leaderboard.all(game, limit), 200, true);
     }
     if (pathname.startsWith("/api/")) return json({ error: "not found" }, 404);
     if (request.method !== "GET" && request.method !== "HEAD") {
