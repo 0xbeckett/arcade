@@ -30,7 +30,6 @@ precision mediump float;
 uniform sampler2D uTex;
 uniform vec2 uGrid;    // dots across, down
 uniform vec2 uRes;     // output resolution in device px
-uniform vec3 uPanel;   // dark grid / panel color
 uniform vec3 uGlow;    // bloom tint
 varying vec2 vUv;
 
@@ -46,35 +45,26 @@ void main() {
 
   vec3 col = samp(cell);
 
-  // Rounded-square dot mask with a gap => the dot-matrix grid.
+  // Rounded-square LCD pixel with a thin gap. The gap is a darker shade of the
+  // pixel's OWN color (like a real dot-matrix grid line) so light pixels stay
+  // light and dark pixels stay dark — high, readable contrast either way.
   vec2 d2 = abs(local - 0.5);
-  float dist = max(d2.x, d2.y) * 1.05 + length(d2) * 0.35;
-  float mask = smoothstep(0.52, 0.36, dist);
+  float dist = max(d2.x, d2.y) * 1.02 + length(d2) * 0.30;
+  float mask = smoothstep(0.52, 0.40, dist);
+  vec3 lcd = mix(col * 0.55, col, mask);
 
-  // Bloom: average neighbourhood brightness above the panel color.
-  float bloom = 0.0;
-  for (int y = -1; y <= 1; y++) {
-    for (int x = -1; x <= 1; x++) {
-      vec3 n = samp(cell + vec2(float(x), float(y)));
-      bloom += clamp(length(n - uPanel) * 1.6, 0.0, 1.0);
-    }
-  }
-  bloom /= 9.0;
+  // Glow scales with a pixel's OWN brightness, so lit dots bloom softly while
+  // dark text is never washed out. Bleeds a touch into its gap for a subtle halo.
+  float lum = dot(col, vec3(0.299, 0.587, 0.114));
+  lcd += uGlow * lum * lum * (0.14 + 0.10 * mask);
 
-  // Compose: dots over the dark panel, glow bleeding into the gaps.
-  vec3 lcd = mix(uPanel, col, mask);
-  lcd += uGlow * bloom * (0.16 + 0.34 * (1.0 - mask));
+  // Subtle scanlines tied to output rows.
+  float scan = 0.94 + 0.06 * sin(vUv.y * uRes.y * 3.14159);
 
-  // Scanlines tied to output rows (subtle).
-  float scan = 0.90 + 0.10 * sin(vUv.y * uRes.y * 3.14159);
+  // Gentle vignette.
+  float vig = smoothstep(1.05, 0.32, length(vUv - 0.5) * 1.1);
 
-  // Vignette.
-  vec2 vc = vUv - 0.5;
-  float vig = smoothstep(0.95, 0.30, length(vc) * 1.15);
-
-  // Faint "screen is on" ambient so black areas still read as glass.
-  vec3 outc = lcd * scan * (0.6 + 0.4 * vig) + uPanel * 0.06;
-
+  vec3 outc = lcd * scan * (0.85 + 0.15 * vig);
   gl_FragColor = vec4(outc, 1.0);
 }`;
 
@@ -99,7 +89,6 @@ class WebGLRenderer implements Renderer {
   private gl: WebGLRenderingContext;
   private uGrid: WebGLUniformLocation | null;
   private uRes: WebGLUniformLocation | null;
-  private uPanel: WebGLUniformLocation | null;
   private uGlow: WebGLUniformLocation | null;
   private tex: WebGLTexture;
   private texView = new Uint8Array(DOT_COLS * DOT_ROWS * 4);
@@ -129,7 +118,6 @@ class WebGLRenderer implements Renderer {
 
     this.uGrid = gl.getUniformLocation(prog, 'uGrid');
     this.uRes = gl.getUniformLocation(prog, 'uRes');
-    this.uPanel = gl.getUniformLocation(prog, 'uPanel');
     this.uGlow = gl.getUniformLocation(prog, 'uGlow');
     gl.uniform2f(this.uGrid, DOT_COLS, DOT_ROWS);
 
@@ -167,7 +155,6 @@ class WebGLRenderer implements Renderer {
       gl.UNSIGNED_BYTE,
       this.texView,
     );
-    if (this.uPanel) gl.uniform3fv(this.uPanel, norm(palette.tones[3]).map((v) => v * 0.35) as any);
     if (this.uGlow) gl.uniform3fv(this.uGlow, norm(palette.glow));
     gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
