@@ -1,0 +1,4 @@
+{
+  "$comment": "REGISTRATION HOOK — the integration ticket lists the 10 game slugs here (order = menu order). The shell fetches this file at boot and loads public/games/<slug>.js for each. The bundled 'demo' self-test is always loaded whether or not it is listed here. Do NOT edit the shell to add games; only edit this array.",
+  "games": []
+}

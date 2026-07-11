@@ -1,0 +1,376 @@
+/* ============================================================================
+   ARCADE BOY — device chrome
+   Phone-first Game Boy handheld. No scroll, no zoom, no tap delay, no select.
+   ========================================================================== */
+
+:root {
+  --body-1: #d9d4c8;
+  --body-2: #c4bfb2;
+  --body-3: #b3ae9f;
+  --body-edge: #8f8a7c;
+  --bezel-1: #4a4b57;
+  --bezel-2: #33343d;
+  --bezel-edge: #202128;
+  --btn-a: #ac2f5a;
+  --btn-a-2: #7f1f42;
+  --dpad: #2d2e33;
+  --dpad-2: #1c1d21;
+  --pill: #8a8577;
+  --pill-2: #6f6a5d;
+  --ink: #4c4a58;
+  --accent: #5b3d8f;
+  --led: #d34d5a;
+  --shadow: rgba(20, 18, 24, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(120% 90% at 50% 0%, #26262e 0%, #191920 55%, #101015 100%);
+}
+
+/* ---- device body -------------------------------------------------------- */
+.device {
+  position: relative;
+  width: min(100vw, 452px);
+  height: min(100dvh, 940px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 1.4vh, 12px);
+  padding:
+    calc(env(safe-area-inset-top, 0px) + clamp(10px, 2.4vh, 22px))
+    clamp(14px, 4.5vw, 26px)
+    calc(env(safe-area-inset-bottom, 0px) + clamp(12px, 2.4vh, 22px));
+  background: linear-gradient(160deg, var(--body-1), var(--body-2) 55%, var(--body-3));
+  border-radius: 16px 16px 74px 16px;
+  box-shadow:
+    inset 0 2px 2px rgba(255, 255, 255, 0.5),
+    inset 0 -6px 14px rgba(0, 0, 0, 0.14),
+    inset 0 0 0 2px var(--body-edge),
+    0 20px 50px -12px var(--shadow);
+}
+
+/* ---- top strip ---------------------------------------------------------- */
+.deco-top {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-height: 10px;
+  padding: 0 6px;
+}
+.power-line {
+  font-size: clamp(7px, 1.5vw, 9px);
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: #7d7869;
+  opacity: 0.8;
+}
+
+/* ---- screen ------------------------------------------------------------- */
+.screen-frame {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(10px, 2.6vh, 20px) clamp(14px, 4vw, 26px) clamp(14px, 2.8vh, 22px);
+  border-radius: 12px 12px 30px 12px;
+  background: linear-gradient(155deg, var(--bezel-1), var(--bezel-2));
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 2px var(--bezel-edge),
+    0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.screen-top {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: clamp(6px, 1.4vh, 12px);
+}
+.led {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff8f97, var(--led) 60%, #7d2530);
+  box-shadow: 0 0 6px 1px rgba(211, 77, 90, 0.7), inset 0 0 2px rgba(0, 0, 0, 0.4);
+}
+.screen-title {
+  font-size: clamp(8px, 1.7vw, 11px);
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #c9c7d4;
+  opacity: 0.85;
+}
+.lcd-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lcd {
+  aspect-ratio: 5 / 6;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  display: block;
+  border-radius: 4px;
+  background: #0f380f;
+  box-shadow:
+    0 0 0 2px rgba(0, 0, 0, 0.5),
+    0 0 22px rgba(120, 190, 90, 0.12),
+    inset 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+/* ---- wordmark ----------------------------------------------------------- */
+.brand {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  padding: clamp(2px, 0.8vh, 6px) 0;
+}
+.brand-name {
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 1px;
+  font-size: clamp(15px, 4.4vw, 24px);
+  color: var(--accent);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.brand-sub {
+  font-weight: 800;
+  font-style: italic;
+  font-size: clamp(9px, 2.4vw, 13px);
+  letter-spacing: 1px;
+  color: #7d7869;
+}
+
+/* ---- controls: d-pad + A/B ---------------------------------------------- */
+.controls {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(4px, 1.4vh, 12px) clamp(6px, 2vw, 16px) 0;
+}
+
+.dpad-zone,
+.ab-zone {
+  flex: 0 0 auto;
+}
+
+/* D-pad: a 3x3 grid; the whole box is the touch surface (corners = diagonals). */
+.dpad {
+  --d: clamp(96px, 30vw, 138px);
+  position: relative;
+  width: var(--d);
+  height: var(--d);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  touch-action: none;
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.3));
+}
+.dpad-cell,
+.dpad-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6f7075;
+  font-size: clamp(10px, 3vw, 14px);
+  touch-action: none;
+  background: linear-gradient(160deg, var(--dpad), var(--dpad-2));
+}
+.dpad-cell > span {
+  pointer-events: none;
+  transform: translateY(-1px);
+  transition: color 0.05s;
+}
+.dpad-center {
+  background: var(--dpad-2);
+}
+.dpad-center::after {
+  content: "";
+  width: 42%;
+  height: 42%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #3a3b41, #1a1b1f);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+.up {
+  grid-area: 1 / 2 / 2 / 3;
+  border-radius: 8px 8px 0 0;
+}
+.left {
+  grid-area: 2 / 1 / 3 / 2;
+  border-radius: 8px 0 0 8px;
+}
+.right {
+  grid-area: 2 / 3 / 3 / 4;
+  border-radius: 0 8px 8px 0;
+}
+.down {
+  grid-area: 3 / 2 / 4 / 3;
+  border-radius: 0 0 8px 8px;
+}
+.dpad-center {
+  grid-area: 2 / 2 / 3 / 3;
+}
+.dpad-cell.active {
+  background: linear-gradient(160deg, #17181c, #101116);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.7);
+}
+.dpad-cell.active > span {
+  color: #aeb0b6;
+}
+
+/* A / B buttons */
+.ab-zone {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(10px, 3vw, 18px);
+  transform: rotate(-20deg);
+}
+.round-btn {
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: clamp(52px, 15vw, 70px);
+  height: clamp(52px, 15vw, 70px);
+  border-radius: 50%;
+  touch-action: none;
+  cursor: pointer;
+  color: #ffdfe9;
+  font-weight: 800;
+  font-size: clamp(13px, 3.6vw, 17px);
+  background: linear-gradient(160deg, var(--btn-a), var(--btn-a-2));
+  box-shadow:
+    0 4px 0 var(--btn-a-2),
+    0 5px 8px rgba(0, 0, 0, 0.35),
+    inset 0 2px 3px rgba(255, 255, 255, 0.3);
+  transition: transform 0.04s ease, box-shadow 0.04s ease;
+}
+.round-btn.b {
+  margin-top: clamp(14px, 4vw, 22px);
+}
+.round-btn > span {
+  pointer-events: none;
+  display: inline-block;
+  transform: rotate(20deg);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+}
+.round-btn.pressed {
+  transform: translateY(4px);
+  box-shadow:
+    0 0 0 var(--btn-a-2),
+    0 1px 3px rgba(0, 0, 0, 0.4),
+    inset 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+/* ---- start / select ----------------------------------------------------- */
+.startsel {
+  flex: 0 0 auto;
+  display: flex;
+  gap: clamp(16px, 6vw, 34px);
+  align-items: center;
+  justify-content: center;
+  padding-top: clamp(4px, 1.6vh, 12px);
+}
+.pill {
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  margin: 0;
+  touch-action: none;
+  cursor: pointer;
+  width: clamp(52px, 15vw, 68px);
+  height: clamp(18px, 4.6vw, 22px);
+  border-radius: 20px;
+  transform: rotate(-20deg);
+  background: linear-gradient(160deg, var(--pill), var(--pill-2));
+  box-shadow:
+    0 3px 0 #55503f,
+    0 4px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.04s ease, box-shadow 0.04s ease;
+}
+.pill > span {
+  pointer-events: none;
+  font-size: clamp(6px, 1.5vw, 8px);
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #3f3b30;
+  transform: rotate(20deg);
+}
+.pill.pressed {
+  transform: rotate(-20deg) translateY(3px);
+  box-shadow:
+    0 0 0 #55503f,
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    inset 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+/* ---- speaker ------------------------------------------------------------ */
+.speaker {
+  flex: 0 0 auto;
+  display: flex;
+  gap: clamp(5px, 1.6vw, 9px);
+  justify-content: flex-end;
+  align-items: center;
+  padding: clamp(4px, 1.4vh, 10px) 8px 0;
+  transform: rotate(-20deg);
+  transform-origin: right center;
+}
+.speaker i {
+  width: 3px;
+  height: clamp(18px, 5vw, 30px);
+  border-radius: 3px;
+  background: linear-gradient(var(--body-edge), #a09a8b);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* ---- short / landscape phones ------------------------------------------- */
+@media (max-height: 620px) {
+  .device {
+    border-radius: 12px 12px 40px 12px;
+    gap: 3px;
+  }
+  .brand {
+    padding: 0;
+  }
+  .speaker {
+    display: none;
+  }
+}

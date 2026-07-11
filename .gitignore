@@ -1,4 +1,7 @@
+node_modules/
 scores.db
 scores.db-shm
 scores.db-wal
-node_modules/
+*.log
+.DS_Store
+.beckett/tmp/

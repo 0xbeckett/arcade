@@ -1,8 +1,16 @@
 {
   "name": "arcade",
+  "version": "1.0.0",
   "private": true,
+  "description": "Phone-first Game Boy handheld arcade: dot-matrix LCD shell + 10 games + shared leaderboard backend",
   "type": "module",
   "scripts": {
-    "start": "bun run server.ts"
+    "start": "bun run server.ts",
+    "build": "bun run build.ts",
+    "watch": "bun run build.ts --watch",
+    "typecheck": "bunx tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
   }
 }
