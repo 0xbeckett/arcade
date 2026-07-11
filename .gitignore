@@ -1,4 +1,5 @@
 node_modules/
+.scratch/
 scores.db
 scores.db-shm
 scores.db-wal
