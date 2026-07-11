@@ -149,13 +149,13 @@ check('tap jump is short (head row >= 11)', tapApex >= 11, 'apex=' + tapApex);
 fixRng([0]);
 game.init(ctx);
 tap('a');
-let survivedTicks = 0, dead = false;
-// auto-play: hold A whenever an obstacle is 4-6 cells ahead on the ground row
+let survivedTicks = 0, dead = false, hold6 = 0;
+// auto-play: when a block is ~2-3 cells ahead, jump and HOLD A through the arc
 for (let i = 0; i < 60 * 30 && !dead; i++) {
-  const gr = 13;
   let near = false;
-  for (let x = 5; x <= 8; x++) if (screen.get(x, gr) === '█') near = true;
-  if (near) input.press('a'); else input.release('a');
+  for (let x = 5; x <= 6; x++) if (screen.get(x, 13) === '█') near = true;
+  if (near && hold6 <= 0) hold6 = 22;
+  if (hold6 > 0) { input.press('a'); hold6--; } else input.release('a');
   step(1);
   survivedTicks++;
   if (screen.dump().includes('GAME OVER')) dead = true;
@@ -170,7 +170,7 @@ function ceilTest(doSlide) {
   tap('a');
   for (let i = 0; i < 60 * 60; i++) {
     let near = false;
-    for (let x = 5; x <= 8; x++) if (screen.get(x, 13) === '█' && screen.get(x, 5) !== '█') near = true;
+    for (let x = 5; x <= 6; x++) if (screen.get(x, 13) === '█' && screen.get(x, 5) !== '█') near = true;
     // detect ceiling ahead (dark pillar in upper rows)
     let ceilNear = false;
     for (let x = 4; x <= 9; x++) if (screen.get(x, 6) === '█') ceilNear = true;
@@ -211,7 +211,7 @@ tap('a');
       step(1);
     } else {
       let near = false;
-      for (let x = 5; x <= 8; x++) if (screen.get(x, 13) === '█' && screen.get(x, 5) !== '█') near = true;
+      for (let x = 5; x <= 6; x++) if (screen.get(x, 13) === '█' && screen.get(x, 5) !== '█') near = true;
       let ceilNear = false;
       for (let x = 4; x <= 9; x++) if (screen.get(x, 6) === '█') ceilNear = true;
       if (ceilNear) { input.press('down'); input.release('a'); }
