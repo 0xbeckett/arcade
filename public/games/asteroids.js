@@ -178,8 +178,8 @@
     if (!submitted) {
       submitted = true;
       ctx.arcade.setBestScore('asteroids', score);
-      var p = window.Arcade.submitScore('asteroids', score);
-      if (p && p.catch) p.catch(function () { /* offline: local mirror has it */ });
+      // Hand off to the shell: high-score name entry, submit, leaderboard, menu.
+      ctx.arcade.gameOver(score);
     }
   }
 

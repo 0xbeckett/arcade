@@ -429,10 +429,8 @@
     try {
       ctx.arcade.setBestScore('shmup', score);
     } catch (e) {}
-    try {
-      var p = ctx.arcade.submitScore('shmup', score);
-      if (p && typeof p.then === 'function') p.then(function () {}, function () {});
-    } catch (e) {}
+    // Hand off to the shell: high-score name entry, submit, leaderboard, menu.
+    ctx.arcade.gameOver(score);
   }
 
   function handleCollisions() {

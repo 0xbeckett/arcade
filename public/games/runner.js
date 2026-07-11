@@ -121,10 +121,8 @@
     state = 'dead';
     deadTicks = 0;
     best = ctx.arcade.setBestScore('runner', score);
-    try {
-      var p = ctx.arcade.submitScore('runner', score);
-      if (p && p.catch) p.catch(function () {});
-    } catch (e) { /* offline mirror handles it */ }
+    // Hand off to the shell: high-score name entry, submit, leaderboard, menu.
+    ctx.arcade.gameOver(score);
   }
 
   // --- simulation ------------------------------------------------------

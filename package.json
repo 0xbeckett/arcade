@@ -8,7 +8,7 @@
     "start": "bun run server.ts",
     "build": "bun run build.ts",
     "watch": "bun run build.ts --watch",
-    "typecheck": "bunx tsc --noEmit"
+    "typecheck": "bun x tsc --noEmit"
   },
   "devDependencies": {
     "typescript": "^5.6.0"
