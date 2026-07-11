@@ -12,6 +12,7 @@ const LEN = 3;
  * hands off to the leaderboard with the new entry highlighted.
  */
 export class NameEntryScene implements Scene {
+  readonly id = 'nameentry';
   private chars: number[];
   private cursor = 0;
   private blink = 0;

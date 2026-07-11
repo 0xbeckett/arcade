@@ -9,6 +9,8 @@ import type { Scores } from '../scores';
  * exit), so games and built-in UI share one code path.
  */
 export interface Scene {
+  /** Stable identifier for logging/debugging (survives minification). */
+  readonly id?: string;
   /** Fixed-timestep tick. */
   update(dtMs: number): void;
   /** Draw the frame. */

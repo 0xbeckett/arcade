@@ -8,6 +8,7 @@ import { COLS, ROWS } from '../screen';
  * player just set) that row blinks. B / A / START returns to the menu.
  */
 export class LeaderboardScene implements Scene {
+  readonly id = 'leaderboard';
   private entries: LeaderboardEntry[] | null = null;
   private blink = 0;
   private scroll = 0;

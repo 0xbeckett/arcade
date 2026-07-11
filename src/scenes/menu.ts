@@ -8,6 +8,7 @@ import { COLS, ROWS } from '../screen';
  * game to public/games/manifest.json makes it appear here with no shell edits.
  */
 export class MenuScene implements Scene {
+  readonly id = 'menu';
   private sel = 0;
   private scroll = 0;
   private blink = 0;

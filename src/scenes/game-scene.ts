@@ -7,6 +7,7 @@ import type { Scene } from './scene';
  * init error, bails back via the provided onCrash handler.
  */
 export class GameScene implements Scene {
+  readonly id = 'game';
   private crashed = false;
 
   constructor(
@@ -63,6 +64,7 @@ export class GameScene implements Scene {
 
 /** A trivial placeholder shown while the shell decides what to do next. */
 export class LoadingScene implements Scene {
+  readonly id = 'loading';
   private t = 0;
   constructor(private label = 'LOADING') {}
   update(dtMs: number): void {
