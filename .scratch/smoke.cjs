@@ -29,7 +29,7 @@ async function waitMenu(page) {
 }
 
 async function scene(page) { return page.evaluate(() => ArcadeDebug.scene()); }
-async function text(page) { return page.evaluate(() => ArcadeDebug.screenText()); }
+async function text(page) { return page.evaluate(() => ArcadeDebug.screenText().join('\n')); }
 async function waitScene(page, id, ms = 6000) {
   await page.waitForFunction((s) => ArcadeDebug.scene() === s, id, { timeout: ms });
 }
@@ -98,7 +98,7 @@ async function run() {
       await page.keyboard.press('Enter');
       await waitScene(page, 'leaderboard', 6000);
       // wait for entries to load
-      await page.waitForFunction(() => !ArcadeDebug.screenText().includes('LOADING'), null, { timeout: 6000 }).catch(()=>{});
+      await page.waitForFunction(() => !ArcadeDebug.screenText().join('\n').includes('LOADING'), null, { timeout: 6000 }).catch(()=>{});
       const lb = await text(page);
       r.leaderboard = lb.toUpperCase().includes(TITLES[slug]) && !lb.includes('NO SCORES');
 
