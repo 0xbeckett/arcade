@@ -221,9 +221,7 @@
     var fg = 'darkest';
     // puff of air left of the bird just after a flap
     if (flapAnim > 3 && BX - 1 >= 0) s.set(BX - 1, fr, '░', 'dark');
-    // body: eye-dot when climbing, solid when diving -> a little life
-    var body = (vy < 0 || flapAnim > 0) ? '◉' : '●';
-    s.set(BX, fr, body, fg);
+    s.set(BX, fr, '●', fg);
   }
 
   function drawHud(s) {
