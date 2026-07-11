@@ -174,6 +174,9 @@ async function staticFile(pathname: string): Promise<Response> {
 
 const server = Bun.serve({
   port,
+  // Bind to a specific host when HOST is set (deploys bind loopback behind the
+  // tunnel); default (unset) keeps Bun's all-interfaces bind for local dev.
+  hostname: process.env.HOST || undefined,
   async fetch(request, server) {
     const url = new URL(request.url);
     const { pathname } = url;

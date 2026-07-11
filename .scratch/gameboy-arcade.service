@@ -1,0 +1,15 @@
+[Unit]
+Description=Game Boy Arcade (OPS-141) — bun+SQLite leaderboard + 10 games + dot-matrix shell
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/beckett/.local/share/gameboy-arcade
+Environment=PORT=8790
+Environment=HOST=127.0.0.1
+ExecStart=/usr/local/bin/bun run server.ts
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target
