@@ -17,7 +17,7 @@ The menu is built from whatever registers — **do not edit the shell/menu/regis
 to add a game.**
 
 - `arcade.d.ts` — optional TypeScript types for JSDoc autocomplete.
-- `demo.js` — the bundled self-test (`DEMO: CATCH`). Always loaded, even if not
-  listed in the manifest. Not one of the 10 games; a working reference.
+- `demo.js` — the bundled self-test (`DEMO: CATCH`). A working reference; not one
+  of the 10 games. Loaded only as a fallback when the manifest is empty.
 
 Full contract and Screen/Arcade reference: [`/docs/GAME_API.md`](../../docs/GAME_API.md).

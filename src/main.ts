@@ -33,9 +33,9 @@ async function loadGames(): Promise<void> {
     console.warn('[arcade] no games manifest:', err);
   }
 
-  // The demo is the bundled self-test — always present, even if the manifest is
-  // empty or missing. Registration dedupes by id, so listing it is harmless.
-  if (!slugs.includes('demo')) slugs.push('demo');
+  // If the manifest is missing/empty, fall back to the bundled demo self-test so
+  // the shell is never a blank menu. When real games are listed, they alone show.
+  if (slugs.length === 0) slugs.push('demo');
 
   for (const slug of slugs) {
     try {

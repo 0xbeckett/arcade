@@ -1,4 +1,15 @@
 {
-  "$comment": "REGISTRATION HOOK — the integration ticket lists the 10 game slugs here (order = menu order). The shell fetches this file at boot and loads public/games/<slug>.js for each. The bundled 'demo' self-test is always loaded whether or not it is listed here. Do NOT edit the shell to add games; only edit this array.",
-  "games": []
+  "$comment": "REGISTRATION HOOK — the shell fetches this file at boot and loads public/games/<slug>.js for each entry. Array order = menu order. Add a slug here to make a game appear; do NOT edit the shell/menu/registry.",
+  "games": [
+    "snake",
+    "tetris",
+    "blocks2048",
+    "pong",
+    "minesweeper",
+    "breakout",
+    "flappy",
+    "shmup",
+    "asteroids",
+    "runner"
+  ]
 }
