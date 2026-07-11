@@ -168,18 +168,24 @@ function ceilTest(doSlide) {
   fixRng([0]);
   game.init(ctx);
   tap('a');
+  let hold = 0;
   for (let i = 0; i < 60 * 60; i++) {
-    let near = false;
-    for (let x = 5; x <= 6; x++) if (screen.get(x, 13) === '█' && screen.get(x, 5) !== '█') near = true;
-    // detect ceiling ahead (dark pillar in upper rows)
+    // detect ceiling ahead (dark pillar in upper rows); never jump into one
     let ceilNear = false;
     for (let x = 4; x <= 9; x++) if (screen.get(x, 6) === '█') ceilNear = true;
+    let near = false;
+    for (let x = 5; x <= 6; x++) {
+      if (screen.get(x, 13) === '█' && screen.get(x, 5) !== '█') near = true;
+    }
     if (ceilNear) {
-      if (doSlide) { input.press('down'); input.release('a'); }
-      // if not sliding: do nothing, run into it standing
+      hold = 0;
+      input.release('a');
+      if (doSlide) input.press('down');
+      // if not sliding: run into it standing
     } else {
       input.release('down');
-      if (near) input.press('a'); else input.release('a');
+      if (near && hold <= 0) hold = 22;
+      if (hold > 0) { input.press('a'); hold--; } else input.release('a');
     }
     step(1);
     if (screen.dump().includes('GAME OVER')) return { died: true, i };
@@ -200,7 +206,7 @@ fixRng([0]);
 game.init(ctx);
 tap('a');
 {
-  let dead8 = false, sawGapDeath = false;
+  let dead8 = false, sawGapDeath = false, hold8 = 0;
   for (let i = 0; i < 60 * 120 && !dead8; i++) {
     const hud = screen.dump().split('\n')[0];
     const m = hud.match(/(\d+)/);
@@ -211,11 +217,17 @@ tap('a');
       step(1);
     } else {
       let near = false;
-      for (let x = 5; x <= 6; x++) if (screen.get(x, 13) === '█' && screen.get(x, 5) !== '█') near = true;
+      for (let x = 5; x <= 6; x++) {
+        if (screen.get(x, 13) === '█' && screen.get(x, 5) !== '█') near = true;
+      }
       let ceilNear = false;
       for (let x = 4; x <= 9; x++) if (screen.get(x, 6) === '█') ceilNear = true;
-      if (ceilNear) { input.press('down'); input.release('a'); }
-      else { input.release('down'); if (near) input.press('a'); else input.release('a'); }
+      if (ceilNear) { hold8 = 0; input.release('a'); input.press('down'); }
+      else {
+        input.release('down');
+        if (near && hold8 <= 0) hold8 = 22;
+        if (hold8 > 0) { input.press('a'); hold8--; } else input.release('a');
+      }
       step(1);
     }
     if (screen.dump().includes('GAME OVER')) { dead8 = true; sawGapDeath = sc > 340; }

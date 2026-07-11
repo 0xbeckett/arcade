@@ -148,9 +148,19 @@
       vy = 0;
     }
 
-    sliding = grounded && ctx.input.isDown('down');
+    // while a ceiling overlaps the player, standing up (or jumping into it)
+    // would be an instant unfair death — hold the slide until it has passed
+    var underCeil = false;
+    for (var ci = 0; ci < obstacles.length; ci++) {
+      var co = obstacles[ci];
+      if (co.type !== 'ceil') continue;
+      var csx = co.x - scrollX;
+      if (csx + 0.12 < PXR && csx + co.w - 0.12 > PXL) { underCeil = true; break; }
+    }
 
-    if (buffer > 0 && (grounded || coyote > 0)) { // jump (cancels slide)
+    sliding = grounded && (ctx.input.isDown('down') || underCeil);
+
+    if (buffer > 0 && (grounded || coyote > 0) && !underCeil) { // jump (cancels slide)
       vy = -JUMP_V;
       grounded = false;
       sliding = false;
