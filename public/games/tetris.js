@@ -104,13 +104,10 @@
     if (submitted) return;
     submitted = true;
     try {
-      // Tetris keeps its own LCD game-over panel so a player can retry at once.
-      var result = window.Arcade.submitScore('tetris', score);
-      if (result && result.catch) result.catch(function () {});
-    } catch (ignore) {}
-    try {
       if (ctx.arcade.setBestScore) best = ctx.arcade.setBestScore('tetris', score);
     } catch (ignoreBest) {}
+    // Hand off to the shell: high-score name entry, submit, leaderboard, menu.
+    ctx.arcade.gameOver(score);
   }
 
   function spawn() {

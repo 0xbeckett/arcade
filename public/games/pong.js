@@ -140,10 +140,8 @@
       if (!submitted) {
         submitted = true;
         best = ctx.arcade.setBestScore('pong', score);
-        // Scores are submitted here because this game keeps its match-result
-        // screen alive so START/A can immediately begin another match.
-        var request = window.Arcade.submitScore('pong', score);
-        if (request && request.catch) request.catch(function () { /* offline is OK */ });
+        // Hand off to the shell: high-score name entry, submit, leaderboard, menu.
+        ctx.arcade.gameOver(score);
       }
       return;
     }

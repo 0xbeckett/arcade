@@ -88,14 +88,9 @@
 
   function submitResult() {
     finalScore = points();
-    try {
-      var p = window.Arcade.submitScore('minesweeper', finalScore);
-      if (p && p.catch) p.catch(function () {});
-    } catch (e) {
-      // submitScore is offline-safe in the shell; this guard also keeps a run
-      // playable in a minimal development harness.
-    }
     try { ctx.arcade.setBestScore('minesweeper', finalScore); } catch (ignore) {}
+    // Hand off to the shell: high-score name entry, submit, leaderboard, menu.
+    ctx.arcade.gameOver(finalScore);
   }
 
   function finish(won) {

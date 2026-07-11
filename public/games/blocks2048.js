@@ -91,14 +91,10 @@
     if (submitted) return;
     submitted = true;
     try {
-      // Keep the result visible so START/A can immediately deal another game.
-      // The shell API itself handles online and offline score storage.
-      var result = window.Arcade.submitScore('blocks2048', score);
-      if (result && result.catch) result.catch(function () {});
-    } catch (ignore) {}
-    try {
       if (ctx.arcade.setBestScore) best = ctx.arcade.setBestScore('blocks2048', score);
     } catch (ignoreBest) {}
+    // Hand off to the shell: high-score name entry, submit, leaderboard, menu.
+    ctx.arcade.gameOver(score);
   }
 
   function slide(direction) {

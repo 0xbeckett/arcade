@@ -95,11 +95,9 @@
     if (ctx && ctx.arcade && ctx.arcade.setBestScore) {
       best = ctx.arcade.setBestScore('snake', score);
     }
-    // Submit directly: Snake retains its game-over screen so START/A can retry.
-    try {
-      var result = window.Arcade.submitScore('snake', score);
-      if (result && result.catch) result.catch(function () { /* offline is OK */ });
-    } catch (e) { /* an offline shell may only retain the local best */ }
+    // Hand off to the shell: it runs high-score name entry, submits the score,
+    // shows the leaderboard, then returns to the menu.
+    ctx.arcade.gameOver(score);
   }
 
   function endGame() {

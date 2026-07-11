@@ -161,8 +161,8 @@
       if (!submitted) {
         submitted = true;
         best = ctx.arcade.setBestScore('breakout', score);
-        var p = window.Arcade.submitScore('breakout', score);
-        if (p && p.catch) p.catch(function () { /* offline: local mirror keeps it */ });
+        // Hand off to the shell: high-score name entry, submit, leaderboard, menu.
+        ctx.arcade.gameOver(score);
       }
     } else {
       toServe();
