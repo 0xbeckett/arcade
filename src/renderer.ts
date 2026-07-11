@@ -221,9 +221,15 @@ class Canvas2DRenderer implements Renderer {
 
 export function createRenderer(canvas: HTMLCanvasElement): Renderer {
   try {
+    const attrs: WebGLContextAttributes = {
+      antialias: false,
+      alpha: false,
+      // Keeps the LCD buffer readable for screenshots / share features / tests.
+      preserveDrawingBuffer: true,
+    };
     const gl =
-      (canvas.getContext('webgl', { antialias: false, alpha: false }) as WebGLRenderingContext) ||
-      (canvas.getContext('experimental-webgl') as WebGLRenderingContext);
+      (canvas.getContext('webgl', attrs) as WebGLRenderingContext) ||
+      (canvas.getContext('experimental-webgl', attrs) as WebGLRenderingContext);
     if (gl) return new WebGLRenderer(canvas, gl);
   } catch {
     /* fall through */

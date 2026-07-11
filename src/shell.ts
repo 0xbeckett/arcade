@@ -211,6 +211,9 @@ export class Shell implements ShellHost {
     this.inGame = false;
     this.playingId = null;
     const finalScore = Math.floor(score) || 0;
+    // Always persist the local personal best on game over, independent of
+    // whether the score qualifies for the online leaderboard.
+    this.scores.setBestScore(gameId, finalScore);
     let qualifies = false;
     try {
       qualifies = await this.scores.qualifies(gameId, finalScore, 10);
