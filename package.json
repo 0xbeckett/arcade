@@ -12,7 +12,6 @@
     "serve": "bun run serve.ts"
   },
   "devDependencies": {
-    "playwright-core": "^1.61.1",
     "typescript": "^5.6.0"
   }
 }
